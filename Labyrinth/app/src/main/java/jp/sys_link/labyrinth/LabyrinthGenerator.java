@@ -87,17 +87,18 @@ public class LabyrinthGenerator {
             }
         }
 
-        int[][] exam = new int[verticalBlockNum][horizontalBlockNum];
+        // スタートからの距離をすべてのブロックについて計算する
+        int[][] steps = new int[verticalBlockNum][horizontalBlockNum];
+        calcStep(result, startY, startX, steps, 0);
 
-        setGoalPosition(result, startY, startX, exam, 0);
-
+        // もっとも長い距離のブロックをゴールに設定する
         int maxScore = 0;
         int maxScoreY = 0;
         int maxScoreX = 0;
         for (int y = 0; y < verticalBlockNum; y++) {
             for (int x = 0; x < horizontalBlockNum; x++) {
-                if (exam[y][x] > maxScore) {
-                    maxScore = exam[y][x];
+                if (steps[y][x] > maxScore) {
+                    maxScore = steps[y][x];
                     maxScoreY = y;
                     maxScoreX = x;
                 }
@@ -111,27 +112,27 @@ public class LabyrinthGenerator {
 
     }
 
-    private static int[][] setGoalPosition(int[][] map, int y, int x, int[][] exam, int score) {
+    private static int[][] calcStep(int[][] map, int y, int x, int[][] steps, int score) {
         score++;
 
         if (y < 0 || x < 0 || y >= map.length || x >= map[0].length) {
-            return exam;
+            return steps;
         }
 
         if (map[y][x] == WALL) {
-            exam[y][x] = -1;
-            return exam;
+            steps[y][x] = -1;
+            return steps;
         }
 
-        if (exam[y][x] == 0 || exam[y][x] > score) {
-            exam[y][x] = score;
+        if (steps[y][x] == 0 || steps[y][x] > score) {
+            steps[y][x] = score;
 
-            setGoalPosition(map, y, x + 1, exam, score);
-            setGoalPosition(map, y + 1, x, exam, score);
-            setGoalPosition(map, y, x - 1, exam, score);
-            setGoalPosition(map, y - 1, x, exam, score);
+            calcStep(map, y, x + 1, steps, score);
+            calcStep(map, y + 1, x, steps, score);
+            calcStep(map, y, x - 1, steps, score);
+            calcStep(map, y - 1, x, steps, score);
         }
-        return exam;
+        return steps;
     }
 
     private static int[][] generateLabyrinth(int seed, int[][] map) {

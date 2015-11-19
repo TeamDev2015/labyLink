@@ -7,6 +7,7 @@ import android.graphics.Rect;
 
 public class Map implements Ball.OnMoveListener {
 
+    // ブロックサイズの変数宣言
     private int blockSize;
     private final int stageSeed;
 
@@ -24,6 +25,8 @@ public class Map implements Ball.OnMoveListener {
 
     private LabyrinthView.Callback callback;
 
+    // マップを表示する大きさ(横幅、高さ)とブロックサイズを受け取り、
+    // 縦横のブロック数を計算したあと、マップを生成する
     public Map(int w, int h, int bs, LabyrinthView.Callback cb, int seed) {
         blockSize = bs;
         horizontalBlockNum = w / blockSize;
@@ -31,6 +34,9 @@ public class Map implements Ball.OnMoveListener {
         callback = cb;
         stageSeed = seed;
 
+        // 縦横のブロック数が偶数であれば１を減算して奇数にする
+        // 迷路生成アルゴリズムでマップを生成する場合、
+        // 奇数個でないと正しくマップを生成できないため
         if (horizontalBlockNum % 2 == 0) {
             horizontalBlockNum--;
         }
@@ -59,6 +65,7 @@ public class Map implements Ball.OnMoveListener {
         startBlock = block[map.startY][map.startX];
     }
 
+    // 全てのBlockを描画する
     void drawMap(Canvas canvas) {
         for (int y = 0; y < verticalBlockNum; y++) {
             for (int x = 0; x < horizontalBlockNum; x++) {
@@ -69,10 +76,12 @@ public class Map implements Ball.OnMoveListener {
 
     @Override
     public boolean canMove(int left, int top, int right, int bottom) {
+        // ボールの現在位置から、ボールがあるブロックの縦と横の位置を計算する
         int verticalBlock = top / blockSize;
         int horizontalBlock = left / blockSize;
 
-        // 讀懃ｴ｢蟇ｾ雎｡縺ｮ繝悶Ο繝?け繧定ｨｭ螳?        seTargetBlock(verticalBlock, horizontalBlock);
+        // 検索対象のブロックを設定
+        seTargetBlock(verticalBlock, horizontalBlock);
 
         int yLen = targetBlock.length;
         int xLen = targetBlock[0].length;
@@ -99,7 +108,7 @@ public class Map implements Ball.OnMoveListener {
 
                     double distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
 
-                    // 遨ｴ縺ｫ關ｽ縺｡繧句愛螳?
+                    // 穴に落ちる判定
                     if (distance < blockSize / 2) {
                         callback.onHole();
                     }
@@ -133,23 +142,29 @@ public class Map implements Ball.OnMoveListener {
 
     static class Block {
 
+        // 床のタイプを定数宣言、０で初期化
         private static final int TYPE_FLOOR = 0;
+        // 壁のタイプを定数宣言、１で初期化
         private static final int TYPE_WALL = 1;
         private static final int TYPE_START = 2;
         private static final int TYPE_GOAL = 3;
         private static final int TYPE_HOLE = 4;
 
+        // 床オブジェクトの生成
         private static final Paint PAINT_FLOOR = new Paint();
+        // 壁オブジェクトの生成
         private static final Paint PAINT_WALL = new Paint();
         private static final Paint PAINT_START = new Paint();
         private static final Paint PAINT_GOAL = new Paint();
         private static final Paint PAINT_HOLE = new Paint();
 
         static {
-            PAINT_FLOOR.setColor(Color.GRAY);
+            // 床の描画色の設定(シアン色)
+            PAINT_FLOOR.setColor(Color.CYAN);
+            // 壁の描画色の設定(ブラック色)
             PAINT_WALL.setColor(Color.BLACK);
-            PAINT_START.setColor(Color.DKGRAY);
-            PAINT_GOAL.setColor(Color.YELLOW);
+            PAINT_START.setColor(Color.GREEN);
+            PAINT_GOAL.setColor(Color.RED);
             PAINT_HOLE.setColor(Color.rgb(32, 32, 32));
         }
 
@@ -170,10 +185,10 @@ public class Map implements Ball.OnMoveListener {
                     return PAINT_START;
                 case TYPE_GOAL:
                     return PAINT_GOAL;
-                case TYPE_HOLE:
-                    return PAINT_HOLE;
                 case TYPE_WALL:
                     return PAINT_WALL;
+                case TYPE_HOLE:
+                    return PAINT_HOLE;
 
             }
             return null;

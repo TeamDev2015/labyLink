@@ -19,16 +19,20 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
 
     private static final float ACCEL_WEIGHT = 3f;
 
+    // テキストペイントオブジェクトの生成
     private static final Paint TEXT_PAINT = new Paint();
 
     static {
+        // センサー表示テキストの色設定
         TEXT_PAINT.setColor(Color.WHITE);
+        // センサー表示テキストのサイズ設定
         TEXT_PAINT.setTextSize(40f);
     }
 
     private Bitmap ballBitmap;
-
+    // ballの変数宣言
     private Ball ball;
+    // mapの変数宣言
     private Map map;
 
     private int seed;
@@ -91,13 +95,13 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
 
         drawThread.isFinished = true;
         drawThread = null;
-
         return true;
     }
 
     public void drawLabyrinth(Canvas canvas) {
         canvas.drawColor(Color.BLACK);
 
+        // Mapの縦横は描画をするCanvasのサイズ、Blockのサイズはボールのサイズを設定する
         int blockSize = ballBitmap.getHeight();
         if (map == null) {
             map = new Map(canvas.getWidth(), canvas.getHeight(), blockSize, callback, seed);
@@ -110,15 +114,17 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
 
         map.drawMap(canvas);
 
-        ball.draw(canvas);
+        ball.draw(canvas);;
 
         if (sensorValues != null) {
+            // 加速度センサーの値を表示させる
             canvas.drawText("sensor[0] = " + sensorValues[0], 10, 150, TEXT_PAINT);
             canvas.drawText("sensor[1] = " + sensorValues[1], 10, 200, TEXT_PAINT);
             canvas.drawText("sensor[2] = " + sensorValues[2], 10, 250, TEXT_PAINT);
         }
     }
 
+    // 加速度センサーの開始
     public void startSensor() {
         sensorValues = null;
 
@@ -127,6 +133,7 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
     }
 
+    // 加速度センサーの停止
     public void stopSensor() {
         SensorManager sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
         sensorManager.unregisterListener(this);
@@ -150,12 +157,14 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
         stopSensor();
     }
 
-    private static final float ALPHA = 0.8f;
+    private static final float ALPHA = 0.9f;
     private float[] sensorValues;
 
     @Override
+    // 加速度センサーの値は、SensorEventListenerのonSensorChangedメソッドで受け取る
     public void onSensorChanged(SensorEvent event) {
         if (sensorValues == null) {
+            // 初めてセンサーの値を受け取ったときに、sensorValues配列を初期化する
             sensorValues = new float[3];
             sensorValues[0] = event.values[0];
             sensorValues[1] = event.values[1];
@@ -163,10 +172,13 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
             return;
         }
 
+        // センサーの値が更新された場合に、現在の値をそのまま書き換えるのではなく、
+        // 現在の値と、変化後の値を特定の割合で混ぜ合わせることで、急激な変化を抑制する
         sensorValues[0] = sensorValues[0] * ALPHA + event.values[0] * (1f - ALPHA);
         sensorValues[1] = sensorValues[1] * ALPHA + event.values[1] * (1f - ALPHA);
         sensorValues[2] = sensorValues[2] * ALPHA + event.values[2] * (1f - ALPHA);
 
+        // センサーとボールの位置の連動を、Ballクラスのmoveメソッドに置き換える
         if (ball != null) {
             ball.move(-sensorValues[0] * ACCEL_WEIGHT, sensorValues[1] * ACCEL_WEIGHT);
         }
@@ -175,4 +187,5 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
+
 }

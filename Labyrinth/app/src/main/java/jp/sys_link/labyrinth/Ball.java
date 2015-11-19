@@ -14,14 +14,19 @@ public class Ball {
     private final Rect rect;
     private final Rect srcRect;
 
-    private OnMoveListener listener;
-
-    public void setOnMoveListener(OnMoveListener l) {
-        listener = l;
+    // ボールが希望する位置に動くことができるか(壁にぶつからないか)を判定する
+    public interface OnMoveListener {
+        public boolean canMove(int left, int top, int right, int bottom);
     }
+
+    private OnMoveListener listener;
 
     public Ball(Bitmap bmp, Map.Block startBlock, float scale) {
         this(bmp, startBlock.rect.left, startBlock.rect.top, scale);
+    }
+
+    public void setOnMoveListener(OnMoveListener l) {
+        listener = l;
     }
 
     public Ball(Bitmap bmp, int left, int top, float scale) {
@@ -31,6 +36,7 @@ public class Ball {
         int bottom = top + Math.round(bmp.getHeight() * scale);
         rect = new Rect(left, top, right, bottom);
 
+        // srcRectに、画像ファイルの大きさそのままの座標を設定する
         srcRect = new Rect(0, 0, bmp.getWidth(), bmp.getHeight());
     }
 
@@ -39,6 +45,7 @@ public class Ball {
 
     }
 
+    // moveメソッドでボールの位置を変更する
     void move(float xOffset, float yOffset) {
 
         int align = yOffset >= 0 ? 1 : -1;
@@ -52,6 +59,9 @@ public class Ball {
         }
     }
 
+    // canMoveでそれぞれの方向に移動できるかを試行する
+    // 試行した移動量では特定の方向に動けない場合、移動量を
+    // 減らしながら移動できるまで繰り返す
     private boolean tryMoveHorizontal(float xOffset) {
         int left = rect.left + Math.round(xOffset);
         int right = left + rect.width();
@@ -78,8 +88,5 @@ public class Ball {
         return true;
     }
 
-    public interface OnMoveListener {
-        public boolean canMove(int left, int top, int right, int bottom);
-    }
 
 }
