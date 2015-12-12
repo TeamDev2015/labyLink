@@ -81,6 +81,9 @@ public class MainActivity extends Activity implements LabyrinthView.Callback {
         isFinished = true;
 
         Toast.makeText(this, "Goal!!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, String.format("%.2f", labyrinthView.time.getElipseTime()) + "秒", Toast.LENGTH_SHORT).show();
+
+        setContentView(R.layout.activity_main);
 
         labyrinthView.stopSensor();
         labyrinthView.stopDrawThread();
@@ -88,6 +91,7 @@ public class MainActivity extends Activity implements LabyrinthView.Callback {
         nextStage();
 
         finish();
+        labyrinthView.time.start();
     }
 
     @Override

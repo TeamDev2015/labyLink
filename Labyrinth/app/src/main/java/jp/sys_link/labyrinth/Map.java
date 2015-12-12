@@ -7,7 +7,7 @@ import android.graphics.Rect;
 
 public class Map implements Ball.OnMoveListener {
 
-    // ƒuƒƒbƒNƒTƒCƒY‚Ì•Ï”éŒ¾
+    // ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚ºã®å¤‰æ•°å®£è¨€
     private int blockSize;
     private final int stageSeed;
 
@@ -25,8 +25,8 @@ public class Map implements Ball.OnMoveListener {
 
     private LabyrinthView.Callback callback;
 
-    // ƒ}ƒbƒv‚ğ•\¦‚·‚é‘å‚«‚³(‰¡•A‚‚³)‚ÆƒuƒƒbƒNƒTƒCƒY‚ğó‚¯æ‚èA
-    // c‰¡‚ÌƒuƒƒbƒN”‚ğŒvZ‚µ‚½‚ ‚ÆAƒ}ƒbƒv‚ğ¶¬‚·‚é
+    // ãƒãƒƒãƒ—ã‚’è¡¨ç¤ºã™ã‚‹å¤§ãã•(æ¨ªå¹…ã€é«˜ã•)ã¨ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚ºã‚’å—ã‘å–ã‚Šã€
+    // ç¸¦æ¨ªã®ãƒ–ãƒ­ãƒƒã‚¯æ•°ã‚’è¨ˆç®—ã—ãŸã‚ã¨ã€ãƒãƒƒãƒ—ã‚’ç”Ÿæˆã™ã‚‹
     public Map(int w, int h, int bs, LabyrinthView.Callback cb, int seed) {
         blockSize = bs;
         horizontalBlockNum = w / blockSize;
@@ -34,9 +34,9 @@ public class Map implements Ball.OnMoveListener {
         callback = cb;
         stageSeed = seed;
 
-        // c‰¡‚ÌƒuƒƒbƒN”‚ª‹ô”‚Å‚ ‚ê‚Î‚P‚ğŒ¸Z‚µ‚ÄŠï”‚É‚·‚é
-        // –À˜H¶¬ƒAƒ‹ƒSƒŠƒYƒ€‚Åƒ}ƒbƒv‚ğ¶¬‚·‚éê‡A
-        // Šï”ŒÂ‚Å‚È‚¢‚Æ³‚µ‚­ƒ}ƒbƒv‚ğ¶¬‚Å‚«‚È‚¢‚½‚ß
+        // ç¸¦æ¨ªã®ãƒ–ãƒ­ãƒƒã‚¯æ•°ãŒå¶æ•°ã§ã‚ã‚Œã°ï¼‘ã‚’æ¸›ç®—ã—ã¦å¥‡æ•°ã«ã™ã‚‹
+        // è¿·è·¯ç”Ÿæˆã‚¢ãƒ«ã‚´ãƒªã‚ºãƒ ã§ãƒãƒƒãƒ—ã‚’ç”Ÿæˆã™ã‚‹å ´åˆã€
+        // å¥‡æ•°å€‹ã§ãªã„ã¨æ­£ã—ããƒãƒƒãƒ—ã‚’ç”Ÿæˆã§ããªã„ãŸã‚
         if (horizontalBlockNum % 2 == 0) {
             horizontalBlockNum--;
         }
@@ -65,7 +65,7 @@ public class Map implements Ball.OnMoveListener {
         startBlock = block[map.startY][map.startX];
     }
 
-    // ‘S‚Ä‚ÌBlock‚ğ•`‰æ‚·‚é
+    // å…¨ã¦ã®Blockã‚’æç”»ã™ã‚‹
     void drawMap(Canvas canvas) {
         for (int y = 0; y < verticalBlockNum; y++) {
             for (int x = 0; x < horizontalBlockNum; x++) {
@@ -76,11 +76,11 @@ public class Map implements Ball.OnMoveListener {
 
     @Override
     public boolean canMove(int left, int top, int right, int bottom) {
-        // ƒ{[ƒ‹‚ÌŒ»İˆÊ’u‚©‚çAƒ{[ƒ‹‚ª‚ ‚éƒuƒƒbƒN‚Ìc‚Æ‰¡‚ÌˆÊ’u‚ğŒvZ‚·‚é
+        // ãƒœãƒ¼ãƒ«ã®ç¾åœ¨ä½ç½®ã‹ã‚‰ã€ãƒœãƒ¼ãƒ«ãŒã‚ã‚‹ãƒ–ãƒ­ãƒƒã‚¯ã®ç¸¦ã¨æ¨ªã®ä½ç½®ã‚’è¨ˆç®—ã™ã‚‹
         int verticalBlock = top / blockSize;
         int horizontalBlock = left / blockSize;
 
-        // ŒŸõ‘ÎÛ‚ÌƒuƒƒbƒN‚ğİ’è
+        // æ¤œç´¢å¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’è¨­å®š
         seTargetBlock(verticalBlock, horizontalBlock);
 
         int yLen = targetBlock.length;
@@ -93,6 +93,7 @@ public class Map implements Ball.OnMoveListener {
                 }
                 if (targetBlock[y][x].type == Block.TYPE_WALL
                         && targetBlock[y][x].rect.intersects(left, top, right, bottom)) {
+                    callback.onGoal();
                     return false;
                 } else if (targetBlock[y][x].type == Block.TYPE_GOAL
                         && targetBlock[y][x].rect.contains(left, top, right, bottom)) {
@@ -108,7 +109,7 @@ public class Map implements Ball.OnMoveListener {
 
                     double distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
 
-                    // ŒŠ‚É—‚¿‚é”»’è
+                    // ç©´ã«è½ã¡ã‚‹åˆ¤å®š
                     if (distance < blockSize / 2) {
                         callback.onHole();
                     }
@@ -142,26 +143,26 @@ public class Map implements Ball.OnMoveListener {
 
     static class Block {
 
-        // °‚Ìƒ^ƒCƒv‚ğ’è”éŒ¾A‚O‚Å‰Šú‰»
+        // åºŠã®ã‚¿ã‚¤ãƒ—ã‚’å®šæ•°å®£è¨€ã€ï¼ã§åˆæœŸåŒ–
         private static final int TYPE_FLOOR = 0;
-        // •Ç‚Ìƒ^ƒCƒv‚ğ’è”éŒ¾A‚P‚Å‰Šú‰»
+        // å£ã®ã‚¿ã‚¤ãƒ—ã‚’å®šæ•°å®£è¨€ã€ï¼‘ã§åˆæœŸåŒ–
         private static final int TYPE_WALL = 1;
         private static final int TYPE_START = 2;
         private static final int TYPE_GOAL = 3;
         private static final int TYPE_HOLE = 4;
 
-        // °ƒIƒuƒWƒFƒNƒg‚Ì¶¬
+        // åºŠã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç”Ÿæˆ
         private static final Paint PAINT_FLOOR = new Paint();
-        // •ÇƒIƒuƒWƒFƒNƒg‚Ì¶¬
+        // å£ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç”Ÿæˆ
         private static final Paint PAINT_WALL = new Paint();
         private static final Paint PAINT_START = new Paint();
         private static final Paint PAINT_GOAL = new Paint();
         private static final Paint PAINT_HOLE = new Paint();
 
         static {
-            // °‚Ì•`‰æF‚Ìİ’è(ƒVƒAƒ“F)
+            // åºŠã®æç”»è‰²ã®è¨­å®š(ã‚·ã‚¢ãƒ³è‰²)
             PAINT_FLOOR.setColor(Color.CYAN);
-            // •Ç‚Ì•`‰æF‚Ìİ’è(ƒuƒ‰ƒbƒNF)
+            // å£ã®æç”»è‰²ã®è¨­å®š(ãƒ–ãƒ©ãƒƒã‚¯è‰²)
             PAINT_WALL.setColor(Color.BLACK);
             PAINT_START.setColor(Color.GREEN);
             PAINT_GOAL.setColor(Color.RED);

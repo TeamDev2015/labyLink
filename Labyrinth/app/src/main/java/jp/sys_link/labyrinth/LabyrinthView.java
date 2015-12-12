@@ -1,6 +1,7 @@
 package jp.sys_link.labyrinth;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -34,6 +35,8 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
     private Ball ball;
     // mapの変数宣言
     private Map map;
+    //timeの変数宣言
+    public Time time;
 
     private int seed;
 
@@ -86,6 +89,9 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
 
         drawThread = new DrawThread();
         drawThread.start();
+        //経過時間スタート
+        time = new Time();
+        time.start();
     }
 
     public boolean stopDrawThread() {
@@ -122,6 +128,7 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
             canvas.drawText("sensor[1] = " + sensorValues[1], 10, 200, TEXT_PAINT);
             canvas.drawText("sensor[2] = " + sensorValues[2], 10, 250, TEXT_PAINT);
         }
+        canvas.drawText("経過時間 = " + String.format("%.2f", time.getElipseTime()), 10, 300, TEXT_PAINT);
     }
 
     // 加速度センサーの開始
