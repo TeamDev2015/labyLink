@@ -120,15 +120,15 @@ public class LabyrinthView extends SurfaceView implements SurfaceHolder.Callback
 
         map.drawMap(canvas);
 
-        ball.draw(canvas);;
+        ball.draw(canvas);
 
         if (sensorValues != null) {
             // 加速度センサーの値を表示させる
-            canvas.drawText("sensor[0] = " + sensorValues[0], 10, 150, TEXT_PAINT);
-            canvas.drawText("sensor[1] = " + sensorValues[1], 10, 200, TEXT_PAINT);
-            canvas.drawText("sensor[2] = " + sensorValues[2], 10, 250, TEXT_PAINT);
+            //canvas.drawText("sensor[0] = " + sensorValues[0], 10, 150, TEXT_PAINT);
+            //canvas.drawText("sensor[1] = " + sensorValues[1], 10, 200, TEXT_PAINT);
+            //canvas.drawText("sensor[2] = " + sensorValues[2], 10, 250, TEXT_PAINT);
         }
-        canvas.drawText("経過時間 = " + String.format("%.2f", time.getElipseTime()), 10, 300, TEXT_PAINT);
+        canvas.drawText("経過時間 = " + String.format("%.1f", time.getElipseTime()), 10, 300, TEXT_PAINT);
     }
 
     // 加速度センサーの開始

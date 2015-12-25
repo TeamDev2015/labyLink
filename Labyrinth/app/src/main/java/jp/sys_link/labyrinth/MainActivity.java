@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -80,18 +82,13 @@ public class MainActivity extends Activity implements LabyrinthView.Callback {
         }
         isFinished = true;
 
-        Toast.makeText(this, "Goal!!", Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, String.format("%.2f", labyrinthView.time.getElipseTime()) + "秒", Toast.LENGTH_SHORT).show();
-
-        setContentView(R.layout.activity_main);
-
         labyrinthView.stopSensor();
         labyrinthView.stopDrawThread();
 
-        nextStage();
+        setContentView(R.layout.activity_main);
 
-        finish();
-        labyrinthView.time.start();
+        TextView tv = (TextView)findViewById(R.id.elapsedTime);
+        tv.setText(String.format("%.2f", labyrinthView.time.getElipseTime()) + "秒");
     }
 
     @Override
@@ -118,5 +115,13 @@ public class MainActivity extends Activity implements LabyrinthView.Callback {
     private void retryStage() {
         Intent intent = MainActivity.newIntent(this, seed);
         startActivity(intent);
+    }
+
+    public void nextStageButton(View view) {
+        nextStage();
+
+        finish();
+        labyrinthView.time.start();
+
     }
 }

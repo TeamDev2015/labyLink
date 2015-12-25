@@ -93,7 +93,6 @@ public class Map implements Ball.OnMoveListener {
                 }
                 if (targetBlock[y][x].type == Block.TYPE_WALL
                         && targetBlock[y][x].rect.intersects(left, top, right, bottom)) {
-                    callback.onGoal();
                     return false;
                 } else if (targetBlock[y][x].type == Block.TYPE_GOAL
                         && targetBlock[y][x].rect.contains(left, top, right, bottom)) {
